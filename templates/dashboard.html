@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Dashboard — {{ event.name }}</h1>
+<p class="text-muted">{{ event.date_time.strftime('%a, %d %b %Y · %I:%M %p') }} · {{ event.venue }}</p>
+
+<div class="row mb-4">
+  <div class="col-md-2"><div class="card stat-card card-body"><div class="display-6">{{ stats.total }}</div><div>Total RSVPs</div></div></div>
+  <div class="col-md-2"><div class="card stat-card card-body"><div class="display-6">{{ stats.confirmed }}</div><div>Confirmed</div></div></div>
+  <div class="col-md-2"><div class="card stat-card card-body"><div class="display-6">{{ stats.waitlist }}</div><div>Waitlist</div></div></div>
+  <div class="col-md-2"><div class="card stat-card card-body"><div class="display-6">{{ stats.checked_in }}</div><div>Checked in</div></div></div>
+  <div class="col-md-2"><div class="card stat-card card-body"><div class="display-6">{{ stats.no_show }}</div><div>No-shows</div></div></div>
+  <div class="col-md-2"><div class="card stat-card card-body"><div class="display-6">{{ stats.check_in_rate }}%</div><div>Check-in rate</div></div></div>
+</div>
+
+<div class="row mb-4">
+  <div class="col-md-6"><div class="card card-body"><h5>RSVPs by ticket type</h5><canvas id="ticketChart"></canvas></div></div>
+  <div class="col-md-6"><div class="card card-body"><h5>Check-ins by hour</h5><canvas id="hourChart"></canvas></div></div>
+</div>
+
+<div class="d-flex gap-2">
+  <a class="btn btn-outline-primary" href="{{ url_for('export_csv', event_id=event.id) }}">Export CSV</a>
+  <a class="btn btn-outline-primary" href="{{ url_for('export_xlsx', event_id=event.id) }}">Export Excel (.xlsx)</a>
+  <a class="btn btn-outline-secondary" href="{{ url_for('attendees', event_id=event.id) }}">View Attendees</a>
+  <a class="btn btn-outline-secondary" href="{{ url_for('checkin') }}">Check-in Desk</a>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const ticketData = {{ stats.by_ticket | tojson }};
+new Chart(document.getElementById('ticketChart'), {
+  type: 'bar',
+  data: { labels: Object.keys(ticketData),
+    datasets: [{ label: 'RSVPs', data: Object.values(ticketData) }] }
+});
+const hourData = {{ stats.by_hour | tojson }};
+new Chart(document.getElementById('hourChart'), {
+  type: 'line',
+  data: { labels: Object.keys(hourData),
+    datasets: [{ label: 'Check-ins', data: Object.values(hourData), fill: false }] }
+});
+</script>
+{% endblock %}

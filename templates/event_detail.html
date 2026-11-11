@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ event.name }}</h1>
+<p class="text-muted">📅 {{ event.date_time.strftime('%a, %d %b %Y · %I:%M %p') }} &nbsp; 📍 {{ event.venue }}</p>
+<p>{{ event.description }}</p>
+<p>
+  <span class="badge bg-primary">{{ event.confirmed_count }} / {{ event.capacity }} confirmed</span>
+  {% if event.waitlist_count %}<span class="badge bg-warning text-dark">{{ event.waitlist_count }} waitlisted</span>{% endif %}
+  <span class="badge bg-success">{{ event.checked_in_count }} checked in</span>
+</p>
+<div class="mb-3 d-flex gap-2">
+  <a class="btn btn-outline-secondary" href="{{ url_for('dashboard', event_id=event.id) }}">Dashboard</a>
+  <a class="btn btn-outline-secondary" href="{{ url_for('attendees', event_id=event.id) }}">Attendees</a>
+  <a class="btn btn-outline-secondary" href="{{ url_for('checkin') }}">Check-in Desk</a>
+</div>
+
+<div class="card card-body" style="max-width: 640px;">
+  <h4>RSVP</h4>
+  {% if event.is_full %}
+  <div class="alert alert-warning">This event is full — new RSVPs will join the waitlist.</div>
+  {% endif %}
+  <form method="post" action="{{ url_for('rsvp', event_id=event.id) }}">
+    <div class="mb-3"><label class="form-label">Full name</label>
+      <input class="form-control" name="name" required></div>
+    <div class="mb-3"><label class="form-label">Email</label>
+      <input class="form-control" type="email" name="email" required>
+      <div class="form-text">One RSVP per email for this event.</div></div>
+    <div class="mb-3"><label class="form-label">College</label>
+      <input class="form-control" name="college" placeholder="e.g. SRMIST"></div>
+    <div class="mb-3"><label class="form-label">Ticket type</label>
+      <select class="form-select" name="ticket_type">
+        {% for t in ticket_types %}<option>{{ t }}</option>{% endfor %}
+      </select></div>
+    <button class="btn btn-primary" type="submit">Confirm RSVP</button>
+  </form>
+</div>
+{% endblock %}

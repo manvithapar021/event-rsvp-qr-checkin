@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="text-center">
+  <h1>Your Ticket 🎟️</h1>
+  <p class="lead">{{ event.name }}</p>
+  <p class="text-muted">{{ event.date_time.strftime('%a, %d %b %Y · %I:%M %p') }} · {{ event.venue }}</p>
+  <div class="card card-body mx-auto" style="max-width: 480px;">
+    <h4>{{ rsvp.name }}</h4>
+    <p class="mb-1">{{ rsvp.email }} · {{ rsvp.college }}</p>
+    <p><span class="badge bg-primary">{{ rsvp.ticket_type }}</span>
+       <span class="badge bg-{{ 'success' if rsvp.status == 'confirmed' else 'warning text-dark' }}">{{ rsvp.status }}</span></p>
+    <img class="qr-img mx-auto d-block" src="{{ url_for('static', filename='qr/' + rsvp.qr_code + '.png') }}" alt="QR code ticket">
+    <p class="mt-2"><code>{{ rsvp.qr_code }}</code></p>
+    <p class="text-muted small">Show this QR code at the check-in desk.</p>
+    <a class="btn btn-outline-primary" href="{{ url_for('download_ticket', qr_code=rsvp.qr_code) }}">Download QR Code</a>
+  </div>
+  <p class="mt-3"><a href="{{ url_for('event_detail', event_id=event.id) }}">← Back to event</a></p>
+</div>
+{% endblock %}

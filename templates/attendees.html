@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Attendees — {{ event.name }}</h1>
+<form method="get" class="row g-2 my-3">
+  <div class="col-md-5"><input class="form-control" name="q" value="{{ search }}" placeholder="Search name, email or college"></div>
+  <div class="col-md-3"><select class="form-select" name="status">
+    <option value="">All statuses</option>
+    <option value="confirmed" {% if status=='confirmed' %}selected{% endif %}>Confirmed</option>
+    <option value="waitlist" {% if status=='waitlist' %}selected{% endif %}>Waitlist</option>
+  </select></div>
+  <div class="col-md-2"><select class="form-select" name="ticket">
+    <option value="">All ticket types</option>
+    {% for t in ticket_types %}<option {% if ticket==t %}selected{% endif %}>{{ t }}</option>{% endfor %}
+  </select></div>
+  <div class="col-md-2"><button class="btn btn-primary w-100" type="submit">Filter</button></div>
+</form>
+<p class="text-muted">{{ rows|length }} attendee(s) shown</p>
+<div class="table-responsive">
+<table class="table table-striped">
+  <thead><tr><th>Name</th><th>Email</th><th>College</th><th>Ticket</th><th>Status</th><th>Checked in</th><th>Ticket</th></tr></thead>
+  <tbody>
+  {% for r in rows %}
+    <tr>
+      <td>{{ r.name }}</td><td>{{ r.email }}</td><td>{{ r.college }}</td><td>{{ r.ticket_type }}</td>
+      <td><span class="badge bg-{{ 'success' if r.status=='confirmed' else 'warning text-dark' }}">{{ r.status }}</span></td>
+      <td>{{ 'Yes · ' + r.checked_in_at.strftime('%H:%M') if r.checked_in else 'No' }}</td>
+      <td><a href="{{ url_for('ticket', qr_code=r.qr_code) }}">{{ r.qr_code }}</a></td>
+    </tr>
+  {% else %}
+    <tr><td colspan="7" class="text-muted">No attendees match this filter.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<div class="d-flex gap-2">
+  <a class="btn btn-outline-primary" href="{{ url_for('export_csv', event_id=event.id) }}">Export CSV</a>
+  <a class="btn btn-outline-primary" href="{{ url_for('export_xlsx', event_id=event.id) }}">Export Excel (.xlsx)</a>
+</div>
+{% endblock %}

@@ -1,0 +1,6 @@
+body { background-color: #f6f7fb; }
+.navbar-brand { font-weight: 700; }
+.card { border-radius: 12px; }
+.stat-card { text-align: center; }
+.stat-card .display-6 { font-weight: 700; }
+.qr-img { max-width: 260px; width: 100%; border: 1px solid #dee2e6; border-radius: 12px; padding: 12px; background: #fff; }

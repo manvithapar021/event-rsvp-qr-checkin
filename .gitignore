@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+instance/
+*.db
+*.sqlite3
+attendees-*.csv
+attendees-*.xlsx
+static/qr/*.png
+.DS_Store
